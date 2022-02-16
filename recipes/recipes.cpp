@@ -32,6 +32,7 @@ float getIngredientUnit(int ingredientTotal, std::string ingredientString);
 float getIngredientTotal(float ammount, Ingredient::Measurement type);
 void printDirections(Recipe& userRecipe);
 void printInstruction(std::string currentInstruction, int currentIndex);
+void validateMeasurementType(int& userInput);
 
 int main()
 {
@@ -225,6 +226,8 @@ int getMeasurementType()
     std::cin.clear();
     std::cin >> userInput;
 
+    validateMeasurementType(userInput);
+
     switch (userInput)
     {
     case 1:
@@ -242,6 +245,17 @@ int getMeasurementType()
     }
 
     return result;
+}
+
+void validateMeasurementType(int &userInput)
+{
+    while (!std::cin.good() || userInput < 1 || userInput > 4)
+    {
+        std::cout << "Error, please enter digits 1-4 to select your option: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin >> userInput;
+    }
 }
 
 float getIngredientTotal(float ammount, Ingredient::Measurement type)
