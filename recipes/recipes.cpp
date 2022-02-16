@@ -32,7 +32,8 @@ float getIngredientUnit(int ingredientTotal, std::string ingredientString);
 float getIngredientTotal(float ammount, Ingredient::Measurement type);
 void printDirections(Recipe& userRecipe);
 void printInstruction(std::string currentInstruction, int currentIndex);
-void validateMeasurementType(int& userInput);
+void validateQuantity(float &result);
+void validateUserInput(int &response, int numberOfOptions);
 
 int main()
 {
@@ -45,10 +46,10 @@ int main()
     Cookies.stepByStepInstructions.push_back("Roll up dough into small balls and put them on a cookie sheet");
     Cookies.stepByStepInstructions.push_back("Bake for 12-15 minutes on 365 degrees");
 
-    Recipe userRecipe;
-    getIngredients(userRecipe);
-    getDirections(userRecipe);
-    debriefUser(userRecipe);
+    Recipe UserRecipe;
+    getIngredients(UserRecipe);
+    getDirections(UserRecipe);
+    debriefUser(UserRecipe);
 
 }
 
@@ -130,6 +131,8 @@ void getDirections(Recipe& userRecipe)
             << "2. All done\n";
         std::cin >> response;
 
+        validateUserInput(response, 2);
+
         switch (response)
         {
         case 1:
@@ -159,6 +162,8 @@ void getIngredients(Recipe& userRecipe)
             << "2. All done\n";
         std::cin >> response;
 
+        validateUserInput(response, 2);
+
         switch (response)
         {
         case 1:
@@ -168,6 +173,17 @@ void getIngredients(Recipe& userRecipe)
         default:
             break;
         }
+    }
+}
+
+void validateUserInput(int &response, int numberOfOptions)
+{
+    while (!std::cin.good() || response < 1 || response > numberOfOptions)
+    {
+        std::cout << "Error, please select a number between " << 1 << " and " << numberOfOptions << ": ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin >> response;
     }
 }
 
@@ -198,7 +214,20 @@ float getQuantity()
     std::cin.clear();
     std::cin >> result;
 
+    validateQuantity(result);
+
     return result;
+}
+
+void validateQuantity(float &result)
+{
+    while (!std::cin.good())
+    {
+        std::cout << "Enter a valid quantity (Integer or decimal value): ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin >> result;
+    }
 }
 
 std::string getIngredientName()
@@ -226,7 +255,7 @@ int getMeasurementType()
     std::cin.clear();
     std::cin >> userInput;
 
-    validateMeasurementType(userInput);
+    validateUserInput(userInput, 4);
 
     switch (userInput)
     {
@@ -245,17 +274,6 @@ int getMeasurementType()
     }
 
     return result;
-}
-
-void validateMeasurementType(int &userInput)
-{
-    while (!std::cin.good() || userInput < 1 || userInput > 4)
-    {
-        std::cout << "Error, please enter digits 1-4 to select your option: ";
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin >> userInput;
-    }
 }
 
 float getIngredientTotal(float ammount, Ingredient::Measurement type)
