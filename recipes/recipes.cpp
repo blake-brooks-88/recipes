@@ -55,11 +55,15 @@ int main()
 
 void printRecipe(Recipe userRecipe)
 {
+    std::cout << "Ingredients: \n";
+
     for (int i = 0; i < userRecipe.ingredientList.size(); i++)
     {
         Ingredient currentIngredient{ userRecipe.ingredientList[i] };
         printIngredient(currentIngredient);
     }
+
+    std::cout << '\n';
 }
 
 void printIngredient(Ingredient currentIngredient)
@@ -102,6 +106,8 @@ void debriefUser(Recipe userRecipe)
 
 void printDirections(Recipe& userRecipe)
 {
+    std::cout << "Instructions: \n";
+
     for (int i = 0; i < userRecipe.stepByStepInstructions.size(); i++)
     {
         std::string currentInstruction{ userRecipe.stepByStepInstructions[i] };
