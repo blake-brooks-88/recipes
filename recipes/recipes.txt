@@ -1,0 +1,48 @@
+0
+Cookies
+3
+Number: 0.75 , Type: 48 , Ingredient Name: Egg
+Number: 2 , Type: 0 , Ingredient Name: Peanut Butter
+Number: 1 , Type: 3 , Ingredient Name: Sugar
+3
+Mix all of the ingredients together in a bowl
+Roll up dough into small balls and put them on a cookie sheet
+Bake for 12-15 minutes on 365 degrees
+2
+
+1
+Number: 2 , Type: 0 , Ingredient Name: chicken
+1
+nope
+0
+Cookies
+3
+0.75 48 Egg
+2 0 Peanut Butter
+1 3 Sugar
+3
+Mix all of the ingredients together in a bowl
+Roll up dough into small balls and put them on a cookie sheet
+Bake for 12-15 minutes on 365 degrees
+2
+
+1
+2 0 chicken breast
+1
+nope
+0
+Cookies
+3
+0.75 48 Egg
+2 0 Peanut Butter
+1 3 Sugar
+3
+Mix all of the ingredients together in a bowl
+Roll up dough into small balls and put them on a cookie sheet
+Bake for 12-15 minutes on 365 degrees
+2
+chicken
+1
+2 0 chicken breast
+1
+nope

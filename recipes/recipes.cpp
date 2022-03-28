@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <fstream>
 
 struct Ingredient
 {
@@ -15,14 +16,17 @@ struct Recipe
 {
     std::vector<Ingredient> ingredientList;
     std::vector<std::string> stepByStepInstructions;
+    std::string name;
 
     int ID{};
 };
 
+const std::string RECIPES_FILE_PATH = "recipes.txt";
+
 int getMeasurementType();
 std::string getIngredientName();
 float getQuantity();
-void addIngredient(Recipe& userRecipe, bool editMode = true,int index = -1);
+void addIngredient(Recipe& userRecipe, bool editMode = false, int index = -1);
 void getIngredients(Recipe& userRecipe);
 void getDirections(Recipe& userRecipe);
 void addDirectionToRecipe(Recipe& userRecipe, bool editMode = false, int index = -1);
@@ -37,23 +41,24 @@ void printInstruction(std::string currentInstruction, int currentIndex);
 void validateQuantity(float &result);
 void validateUserInput(int &response, int numberOfOptions);
 
-void newRecipe(std::vector<Recipe> cookBook);
+void newRecipe(std::vector<Recipe> &cookBook);
+std::string getRecipeName();
 void runCookbook(std::vector<Recipe>& cookBook);
 bool displayCookbookMenu(std::vector<Recipe>& cookBook);
+void saveRecipes(std::vector<Recipe> cookBook, std::string filePath);
 Recipe randomRecipe(std::vector<Recipe> cookBook);
 int findRecipe(std::vector<Recipe> cookBook);
 void editRecipe(Recipe& recipe);
 void printEditOptions(Recipe recipe);
 void editIngredient(Recipe &recipe, int index);
 void editInstruction(Recipe &recipe, int index);
-Recipe randomRecipe(std::vector<Recipe> cookBook);
 int generateRandomNumber(int minValue, int maxValue);
 
 int main()
 {
     Recipe Cookies;
     Cookies.ingredientList.push_back(Ingredient{ .75, Ingredient::Measurement::cup, "Egg" });
-    Cookies.ingredientList.push_back(Ingredient{ 2, Ingredient::Measurement::cup, "Peanut Butter" });
+    Cookies.ingredientList.push_back(Ingredient{ 2, Ingredient::Measurement::count, "Peanut Butter" });
     Cookies.ingredientList.push_back(Ingredient{ 1, Ingredient::Measurement::tablespoon, "Sugar" });
 
     Cookies.stepByStepInstructions.push_back("Mix all of the ingredients together in a bowl");
@@ -61,6 +66,7 @@ int main()
     Cookies.stepByStepInstructions.push_back("Bake for 12-15 minutes on 365 degrees");
 
     Cookies.ID = 0;
+    Cookies.name = "Cookies";
 
     std::vector<Recipe> cookBook{Cookies};
     runCookbook(cookBook);
@@ -89,7 +95,9 @@ bool displayCookbookMenu(std::vector<Recipe> &cookBook)
         << "2. Print Recipe\n"
         << "3. Edit Recipe\n"
         << "4. Random Recipe\n"
-        << "5. Exit The Program\n";
+        << "5. Save Recipes\n"
+        << "6. Load Recipes\n"
+        << "7. Exit The Program\n";
 
     std::cin.clear();
     std::cin >> userInput;
@@ -114,7 +122,38 @@ bool displayCookbookMenu(std::vector<Recipe> &cookBook)
         printRecipe(randomRecipe(cookBook));
         return true;
     case 5:
+        saveRecipes(cookBook, RECIPES_FILE_PATH);
+        return true;
+    case 6:
+        //loadRecipes(cookBook, RECIPES_FILE_PATH);
+        return true;
+    case 7:
         return false;
+    }
+}
+
+void saveRecipes(std::vector<Recipe> cookBook, std::string filePath)
+{
+    std::ofstream recipiesFile(filePath, std::ios_base::app);
+
+    for (Recipe recipe : cookBook)
+    {
+        recipiesFile << recipe.ID << std::endl;
+        recipiesFile << recipe.name << std::endl;
+        recipiesFile << recipe.ingredientList.size() << std::endl;
+        
+        for (Ingredient currentIngredient : recipe.ingredientList)
+        {
+            recipiesFile << currentIngredient.number << " ";
+            recipiesFile << (int)currentIngredient.type << " ";
+            recipiesFile << currentIngredient.ingredient << std::endl;
+        }
+        
+        recipiesFile << recipe.ingredientList.size() << std::endl;
+        for (std::string instruction : recipe.stepByStepInstructions)
+        {
+            recipiesFile << instruction << std::endl;
+        }
     }
 }
 
@@ -208,9 +247,12 @@ int findRecipe(std::vector<Recipe> cookBook)
     return -1;
 }
 
-void newRecipe(std::vector<Recipe> cookBook)
+void newRecipe(std::vector<Recipe> &cookBook)
 {
     Recipe UserRecipe;
+    std::string recipeName = getRecipeName();
+    UserRecipe.name = recipeName;
+
     getIngredients(UserRecipe);
     getDirections(UserRecipe);
 
@@ -219,6 +261,18 @@ void newRecipe(std::vector<Recipe> cookBook)
 
     cookBook.push_back(UserRecipe);
     debriefUser(UserRecipe);
+}
+
+std::string getRecipeName()
+{
+    std::cin.clear();
+    std::string result;
+    std::cout << "What is the name of this recipe: ";
+    std::cin.ignore();
+
+    std::getline(std::cin, result);
+
+    return result;
 }
 
 void loadRecipes()
@@ -261,7 +315,7 @@ void printIngredient(Ingredient currentIngredient)
 
     if (ingredientString == "Count")
     {
-        std::cout << ingredientUnit << " " << ingredientName << std::endl;
+        std::cout << ingredientTotal << " " << ingredientName << std::endl;
     }
     else
     {
@@ -384,6 +438,7 @@ void addDirectionToRecipe(Recipe& userRecipe, bool editMode, int index)
 
 void addIngredient(Recipe& userRecipe, bool editMode, int index)
 {
+    std::cin.clear();
     std::string ingredientName{ getIngredientName() };
     Ingredient::Measurement measurementType{ (Ingredient::Measurement)getMeasurementType() };
     float quantity{ getQuantity() };
@@ -433,9 +488,11 @@ void validateQuantity(float &result)
 
 std::string getIngredientName()
 {
-    std::string result{};
+    std::cin.clear();
+    std::string result;
     std::cout << "Ingredient Name: ";
-    std::cin >> result;
+
+    std::getline(std::cin, result);
 
     return result;
 
@@ -533,7 +590,7 @@ float getIngredientUnit(int ingredientTotal, std::string ingredientString)
     }
     else if (ingredientString == "Count")
     {
-        result = (float)ingredientTotal;
+        result = (float)Ingredient::Measurement::count;
     }
 
     return result;
